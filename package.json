@@ -1,7 +1,7 @@
 {
-  "name": "neighbor-joining",
   "version": "1.0.4",
   "description": "Neighbor Joining library for NPM.",
+  "name": "neighborjoining",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,14 +16,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/biosustain/neighbor-joining.git"
+    "url": "git+https://github.com/CDCgov/neighborjoining.git"
   },
   "author": "Maciej Korzepa <maciejkorzepa@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/biosustain/neighbor-joining/issues"
+    "url": "https://github.com/CDCgov/neighborjoining/issues"
   },
-  "homepage": "https://github.com/biosustain/neighbor-joining#readme",
+  "homepage": "https://github.com/CDCgov/neighborjoining#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",

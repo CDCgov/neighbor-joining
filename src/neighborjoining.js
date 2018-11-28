@@ -1,4 +1,4 @@
-var neighborJoining = (function(){
+var neighborjoining = (function(){
   class RNJ {
     constructor(D, taxa, copyDistanceMatrix=false, taxonIdAccessor=(d)=>d.name){
       if (taxa.length != D.length){

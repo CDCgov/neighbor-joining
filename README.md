@@ -1,14 +1,17 @@
-Neighbor-joining is an NPM package for creating phylogenetic trees. It bases on [Rapid Neighbour-Joining](http://pure.au.dk/ws/files/19821675/rapidNJ.pdf) algorithm.
+neighborjoining is a javascript library for creating phylogenetic trees from
+distance matrices. It is based on the [Rapid Neighbour-Joining](http://pure.au.dk/ws/files/19821675/rapidNJ.pdf)
+algorithm.
 
 # Installation
 
-To install Neighbor-joining package with NPM use: `npm install neighbor-joining`
+To install neighborjoining package with NPM use: `npm install neighborjoining`
 
 # Usage
 
 ```javascript
-var RNJ = new RapidNeighborJoining(D, taxa, copyDistanceMatrix, taxonIdAccessor);
+var RNJ = new neighborjoining(D, taxa, copyDistanceMatrix, taxonIdAccessor);
 ```
+
 Description of arguments used in initialization:
 * **D** - distance matrix (two dimensional array of size NxN)
 * **taxa** - array of size N with taxa data (such as strings or objects). Element (taxon) at first index corresponds to first row/column of the distance matrix and so on.
@@ -46,13 +49,13 @@ var taxa = [
         genotype: "g5"
     }
 ];
-var RNJ = new RapidNeighborJoining(D, taxa);
-RNJ.run();
+var RNJ = new neighborjoining(D, taxa);
 var treeObject = RNJ.getAsObject();
 var treeNewick = RNJ.getAsNewick();
 ```
 
-Then, `treeObject` will contain the following object:
+The `treeObject` will contain the following:
+
 ```javascript
 {
     "taxon": null,
@@ -107,7 +110,9 @@ Then, `treeObject` will contain the following object:
     }]
 }
 ```
+
 `treeNewick` will keep the following string:
-```javascript
-"(C:2,((A:2,B:3):3,(D:2,E:1):2):2);"
+
+```newick
+(C:2,((A:2,B:3):3,(D:2,E:1):2):2);
 ```

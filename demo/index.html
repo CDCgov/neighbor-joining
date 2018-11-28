@@ -1,6 +1,7 @@
 <html>
 <body>
-  <script src="../dist/neighbor-joining.js"></script>
+  <p>Open your console to see the what happened.</p>
+  <script src="../dist/neighborjoining.js"></script>
   <script>
     var D = [
         [0,  5,  9,  9, 8],
@@ -31,9 +32,10 @@
             genotype: "g5"
         }
     ];
-    var RNJ = new neighborJoining(D, taxa);
-    var treeObject = RNJ.getAsObject();
-    console.log(RNJ.getAsNewick());
+    var nj = new neighborjoining(D, taxa);
+    var treeObject = nj.getAsObject();
+    console.log("Newick output:", nj.getAsNewick());
+    console.log(treeObject);
   </script>
 </body>
 </html>
