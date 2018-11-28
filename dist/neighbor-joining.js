@@ -251,7 +251,7 @@ var neighborJoining = function () {
         }
 
         if (node.length) {
-          this.PNewick += ":".concat(node.length);
+          this.PNewick += ":".concat(numberToString(node.length));
         }
       }
     }, {
@@ -355,6 +355,32 @@ var neighborJoining = function () {
     }
 
     return valueCopy;
+  }
+
+  function numberToString(num) {
+    var numStr = String(num);
+
+    if (Math.abs(num) < 1.0) {
+      var e = parseInt(num.toString().split('e-')[1]);
+
+      if (e) {
+        var negative = num < 0;
+        if (negative) num *= -1;
+        num *= Math.pow(10, e - 1);
+        numStr = '0.' + new Array(e).join('0') + num.toString().substring(2);
+        if (negative) numStr = "-" + numStr;
+      }
+    } else {
+      var _e = parseInt(num.toString().split('+')[1]);
+
+      if (_e > 20) {
+        _e -= 20;
+        num /= Math.pow(10, _e);
+        numStr = num.toString() + new Array(_e + 1).join('0');
+      }
+    }
+
+    return numStr;
   }
 
   return RNJ;
