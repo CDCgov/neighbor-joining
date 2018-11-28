@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "babel -d dist/ src/ --module=common",
-    "prepublish": "npm run compile"
+    "compile": "babel src -d dist",
+    "prepublish": "npm run compile",
+    "demo": "node_modules/http-server/bin/http-server"
   },
   "keywords": [
     "phylogeny",
@@ -27,5 +28,6 @@
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
     "@babel/preset-env": "^7.1.6",
+    "http-server": "^0.11.1"
   }
 }

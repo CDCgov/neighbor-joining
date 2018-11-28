@@ -1,0 +1,40 @@
+<html>
+<body>
+  <script src="../dist/neighbor-joining.js"></script>
+  <script>
+    var D = [
+        [0,  5,  9,  9, 8],
+        [5,  0, 10, 10, 9],
+        [9, 10,  0,  8, 7],
+        [9, 10,  8,  0, 3],
+        [8,  9,  7,  3, 0]
+    ];
+    var taxa = [
+        {
+            name: "A",
+            genotype: "g1"
+        },
+        {
+            name: "B",
+            genotype: "g2"
+        },
+        {
+            name: "C",
+            genotype: "g3"
+        },
+        {
+            name: "D",
+            genotype: "g4"
+        },
+        {
+            name: "E",
+            genotype: "g5"
+        }
+    ];
+    var RNJ = new RapidNeighborJoining(D, taxa);
+    RNJ.run();
+    var treeObject = RNJ.getAsObject();
+    console.log(RNJ.getAsNewick());
+  </script>
+</body>
+</html>
