@@ -24,12 +24,8 @@
   },
   "homepage": "https://github.com/biosustain/neighbor-joining#readme",
   "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-cli": "6.4.5",
-    "babel-preset-es2015": "6.5.0",
-    "babel-preset-stage-1": "^6.5.0"
-  },
-  "dependencies": {
-    "timsort": "^0.2.1"
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
   }
 }
