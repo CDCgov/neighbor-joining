@@ -31,8 +31,7 @@
             genotype: "g5"
         }
     ];
-    var RNJ = new RapidNeighborJoining(D, taxa);
-    RNJ.run();
+    var RNJ = new neighborJoining(D, taxa);
     var treeObject = RNJ.getAsObject();
     console.log(RNJ.getAsNewick());
   </script>

@@ -1,4 +1,4 @@
-var RapidNeighborJoining = (function(){
+var neighborJoining = (function(){
   class RNJ {
     constructor(D, taxa, copyDistanceMatrix=false, taxonIdAccessor=(d)=>d.name){
       if (taxa.length != D.length){
@@ -32,6 +32,7 @@ var RapidNeighborJoining = (function(){
       this.rowSumMax = 0;
       this.PNewick = "";
       this.taxonIdAccessor = taxonIdAccessor;
+      this.run();
       return this;
     }
 
@@ -49,17 +50,16 @@ var RapidNeighborJoining = (function(){
     }
 
     search(){
-
       let qMin = Infinity,
-      D = this.D,
-      cN = this.cN,
-      n2 = cN - 2,
-      S = this.S,
-      I = this.I,
-      rowSums = this.rowSums,
-      removedColumns = this.removedIndices,
-      uMax = this.rowSumMax,
-      q, minI = -1, minJ = -1, c2;
+          D = this.D,
+          cN = this.cN,
+          n2 = cN - 2,
+          S = this.S,
+          I = this.I,
+          rowSums = this.rowSums,
+          removedColumns = this.removedIndices,
+          uMax = this.rowSumMax,
+          q, minI = -1, minJ = -1, c2;
 
       // initial guess for qMin
       for (let r = 0; r < this.N; r++){
@@ -94,10 +94,10 @@ var RapidNeighborJoining = (function(){
 
     run(){
       let minI, minJ,
-      d1, d2,
-      l1, l2,
-      node1, node2, node3,
-      self = this;
+          d1, d2,
+          l1, l2,
+          node1, node2, node3,
+          self = this;
 
       function setUpNode(label, distance){
         let node;
@@ -241,8 +241,8 @@ var RapidNeighborJoining = (function(){
 
   function sumRows(a){
     let sum,
-    n = a.length,
-    sums = new Array(n);
+        n = a.length,
+        sums = new Array(n);
 
     for (let i = 0; i < n; i++){
       sum = 0;
