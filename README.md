@@ -50,13 +50,13 @@ var taxa = [
     }
 ];
 var RNJ = new neighborjoining(D, taxa);
-var treeObject = RNJ.getAsObject();
-var treeNewick = RNJ.getAsNewick();
 ```
 
-The `treeObject` will contain the following:
+So, what can we do with it? If you're interested in the raw data, you can see the entire tree:
 
 ```javascript
+RNJ.getAsObject();
+
 {
     "taxon": null,
     "length": null,
@@ -111,8 +111,30 @@ The `treeObject` will contain the following:
 }
 ```
 
-`treeNewick` will keep the following string:
+Alternately, if you just need the Newick string...
 
-```newick
-(C:2,((A:2,B:3):3,(D:2,E:1):2):2);
+```javascript
+var distances = false;
+var round = false;
+var p1 = false;
+RNJ.getAsNewick(distances, round, p1);
+// (C,((A,B),(D,E)));
+```
+
+`getAsNewick` takes three arguments:
+ - `distances` - Should the output include distances?
+ - `round` - Should distances be rounded to the nearest integers?
+ - `p1` - Should distances all have one added to them? (Useful if zeros break downstream normalization efforts)
+
+So...
+
+```javascript
+RNJ.getAsNewick(true);
+// (C:2,((A:2,B:3):3,(D:2,E:1):2):2);
+
+RNJ.getAsNewick(true, true);
+// (C:2,((A:2,B:3):3,(D:2,E:1):2):2);
+
+RNJ.getAsNewick(true, true, true);
+// (C:3,((A:3,B:4):4,(D:3,E:2):3):3);
 ```

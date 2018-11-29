@@ -180,19 +180,22 @@ var neighborjoining = (function(){
       this.indicesLeft.delete(joinedIndex1);
     }
 
-    createNewickTree(node){
+    createNewickTree(node, distances, round, p1){
       if (node.taxon){ // leaf node
         this.PNewick += this.taxonIdAccessor(node.taxon);
       } else { // node with children
         this.PNewick += "(";
         for (let i = 0; i < node.children.length; i++){
-          this.createNewickTree(node.children[i]);
+          this.createNewickTree(node.children[i], distances, round, p1);
           if (i < node.children.length - 1) this.PNewick += ",";
         }
         this.PNewick += ")";
       }
-      if (node.length){
-        this.PNewick += `:${numberToString(node.length)}`;
+      if(distances && node.length !== null && node.length >= 0){
+        let length = node.length;
+        if(p1) length += 1;
+        if(round) length = Math.round(length);
+        this.PNewick += `:${numberToString(length)}`;
       }
     }
 
@@ -200,9 +203,9 @@ var neighborjoining = (function(){
       return this.P;
     }
 
-    getAsNewick(){
+    getAsNewick(distances, round, p1){
       this.PNewick = "";
-      this.createNewickTree(this.P);
+      this.createNewickTree(this.P, distances, round, p1);
       this.PNewick += ";";
       return this.PNewick;
     }
