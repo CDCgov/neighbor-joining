@@ -1,4 +1,19 @@
-var neighborjoining = (function(){
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['b'], function (b) {
+      return (root.neighborjoining = factory());
+    });
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    // Browser globals
+    root.neighborjoining = factory();
+  }
+}(typeof self !== 'undefined' ? self : this, function(){
   class RNJ {
     constructor(D, taxa, copyDistanceMatrix=false, taxonIdAccessor=(d)=>d.name){
       if (taxa.length != D.length){
@@ -292,4 +307,4 @@ var neighborjoining = (function(){
   }
 
   return RNJ;
-})();
+}));
