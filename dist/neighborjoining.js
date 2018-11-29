@@ -43,36 +43,94 @@ var neighborjoining = function () {
       this.newRow = new Array(N);
       this.labelToNode = new Array(2 * N);
       this.nextIndex = N;
-      this.initializeSI();
+      this.I = new Array(this.N);
+      this.S = new Array(this.N);
+
+      for (var _i = 0; _i < this.N; _i++) {
+        var sortedRow = sortWithIndices(this.D[_i], _i, true);
+        this.S[_i] = sortedRow;
+        this.I[_i] = sortedRow.sortIndices;
+      }
+
       this.removedIndices = new Set();
       this.indicesLeft = new Set();
 
-      for (var _i = 0; _i < N; _i++) {
-        this.currIndexToLabel[_i] = _i;
-        this.indicesLeft.add(_i);
+      for (var _i2 = 0; _i2 < N; _i2++) {
+        this.currIndexToLabel[_i2] = _i2;
+        this.indicesLeft.add(_i2);
       }
 
       this.rowSumMax = 0;
       this.PNewick = "";
       this.taxonIdAccessor = taxonIdAccessor;
-      this.run();
+      var minI,
+          minJ,
+          d1,
+          d2,
+          l1,
+          l2,
+          node1,
+          node2,
+          node3,
+          self = this;
+
+      function setUpNode(label, distance) {
+        var node;
+
+        if (label < self.N) {
+          node = new PhyloNode(self.taxa[label], distance);
+          self.labelToNode[label] = node;
+        } else {
+          node = self.labelToNode[label];
+          node.setLength(distance);
+        }
+
+        return node;
+      }
+
+      this.rowSums = sumRows(this.D);
+
+      for (var _i3 = 0; _i3 < this.cN; _i3++) {
+        if (this.rowSums[_i3] > this.rowSumMax) this.rowSumMax = this.rowSums[_i3];
+      }
+
+      while (this.cN > 2) {
+        //if (this.cN % 100 == 0 ) console.log(this.cN);
+        var _this$search = this.search();
+
+        minI = _this$search.minI;
+        minJ = _this$search.minJ;
+        d1 = 0.5 * this.D[minI][minJ] + (this.rowSums[minI] - this.rowSums[minJ]) / (2 * this.cN - 4);
+        d2 = this.D[minI][minJ] - d1;
+        l1 = this.currIndexToLabel[minI];
+        l2 = this.currIndexToLabel[minJ];
+        node1 = setUpNode(l1, d1);
+        node2 = setUpNode(l2, d2);
+        node3 = new PhyloNode(null, null, node1, node2);
+        this.recalculateDistanceMatrix(minI, minJ);
+        var sorted = sortWithIndices(this.D[minJ], minJ, true);
+        this.S[minJ] = sorted;
+        this.I[minJ] = sorted.sortIndices;
+        this.S[minI] = this.I[minI] = [];
+        this.cN--;
+        this.labelToNode[this.nextIndex] = node3;
+        this.currIndexToLabel[minI] = -1;
+        this.currIndexToLabel[minJ] = this.nextIndex++;
+      }
+
+      var left = this.indicesLeft.values();
+      minI = left.next().value;
+      minJ = left.next().value;
+      l1 = this.currIndexToLabel[minI];
+      l2 = this.currIndexToLabel[minJ];
+      d1 = d2 = this.D[minI][minJ] / 2;
+      node1 = setUpNode(l1, d1);
+      node2 = setUpNode(l2, d2);
+      this.P = new PhyloNode(null, null, node1, node2);
       return this;
     }
 
     _createClass(RNJ, [{
-      key: "initializeSI",
-      value: function initializeSI() {
-        var N = this.N;
-        this.I = new Array(N);
-        this.S = new Array(N);
-
-        for (var i = 0; i < N; i++) {
-          var sortedRow = sortWithIndices(this.D[i], i, true);
-          this.S[i] = sortedRow;
-          this.I[i] = sortedRow.sortIndices;
-        }
-      }
-    }, {
       key: "search",
       value: function search() {
         var qMin = Infinity,
@@ -125,74 +183,6 @@ var neighborjoining = function () {
         };
       }
     }, {
-      key: "run",
-      value: function run() {
-        var minI,
-            minJ,
-            d1,
-            d2,
-            l1,
-            l2,
-            node1,
-            node2,
-            node3,
-            self = this;
-
-        function setUpNode(label, distance) {
-          var node;
-
-          if (label < self.N) {
-            node = new PhyloNode(self.taxa[label], distance);
-            self.labelToNode[label] = node;
-          } else {
-            node = self.labelToNode[label];
-            node.setLength(distance);
-          }
-
-          return node;
-        }
-
-        this.rowSums = sumRows(this.D);
-
-        for (var i = 0; i < this.cN; i++) {
-          if (this.rowSums[i] > this.rowSumMax) this.rowSumMax = this.rowSums[i];
-        }
-
-        while (this.cN > 2) {
-          //if (this.cN % 100 == 0 ) console.log(this.cN);
-          var _this$search = this.search();
-
-          minI = _this$search.minI;
-          minJ = _this$search.minJ;
-          d1 = 0.5 * this.D[minI][minJ] + (this.rowSums[minI] - this.rowSums[minJ]) / (2 * this.cN - 4);
-          d2 = this.D[minI][minJ] - d1;
-          l1 = this.currIndexToLabel[minI];
-          l2 = this.currIndexToLabel[minJ];
-          node1 = setUpNode(l1, d1);
-          node2 = setUpNode(l2, d2);
-          node3 = new PhyloNode(null, null, node1, node2);
-          this.recalculateDistanceMatrix(minI, minJ);
-          var sorted = sortWithIndices(this.D[minJ], minJ, true);
-          this.S[minJ] = sorted;
-          this.I[minJ] = sorted.sortIndices;
-          this.S[minI] = this.I[minI] = [];
-          this.cN--;
-          this.labelToNode[this.nextIndex] = node3;
-          this.currIndexToLabel[minI] = -1;
-          this.currIndexToLabel[minJ] = this.nextIndex++;
-        }
-
-        var left = this.indicesLeft.values();
-        minI = left.next().value;
-        minJ = left.next().value;
-        l1 = this.currIndexToLabel[minI];
-        l2 = this.currIndexToLabel[minJ];
-        d1 = d2 = this.D[minI][minJ] / 2;
-        node1 = setUpNode(l1, d1);
-        node2 = setUpNode(l2, d2);
-        this.P = new PhyloNode(null, null, node1, node2);
-      }
-    }, {
       key: "recalculateDistanceMatrix",
       value: function recalculateDistanceMatrix(joinedIndex1, joinedIndex2) {
         var D = this.D,
@@ -216,14 +206,14 @@ var neighborjoining = function () {
           rowChange[i] = -0.5 * (aux + aux2);
         }
 
-        for (var _i2 = 0; _i2 < n; _i2++) {
-          D[joinedIndex1][_i2] = -1;
-          D[_i2][joinedIndex1] = -1;
-          if (removedIndices.has(_i2)) continue;
-          D[joinedIndex2][_i2] = newRow[_i2];
-          D[_i2][joinedIndex2] = newRow[_i2];
-          rowSums[_i2] += rowChange[_i2];
-          if (rowSums[_i2] > newMax) newMax = rowSums[_i2];
+        for (var _i4 = 0; _i4 < n; _i4++) {
+          D[joinedIndex1][_i4] = -1;
+          D[_i4][joinedIndex1] = -1;
+          if (removedIndices.has(_i4)) continue;
+          D[joinedIndex2][_i4] = newRow[_i4];
+          D[_i4][joinedIndex2] = newRow[_i4];
+          rowSums[_i4] += rowChange[_i4];
+          if (rowSums[_i4] > newMax) newMax = rowSums[_i4];
         }
 
         rowSums[joinedIndex1] = 0;
@@ -234,7 +224,7 @@ var neighborjoining = function () {
       }
     }, {
       key: "createNewickTree",
-      value: function createNewickTree(node) {
+      value: function createNewickTree(node, distances, round, p1) {
         if (node.taxon) {
           // leaf node
           this.PNewick += this.taxonIdAccessor(node.taxon);
@@ -243,15 +233,18 @@ var neighborjoining = function () {
           this.PNewick += "(";
 
           for (var i = 0; i < node.children.length; i++) {
-            this.createNewickTree(node.children[i]);
+            this.createNewickTree(node.children[i], distances, round, p1);
             if (i < node.children.length - 1) this.PNewick += ",";
           }
 
           this.PNewick += ")";
         }
 
-        if (node.length) {
-          this.PNewick += ":".concat(numberToString(node.length));
+        if (distances && node.length !== null && node.length >= 0) {
+          var length = node.length;
+          if (p1) length += 1;
+          if (round) length = Math.round(length);
+          this.PNewick += ":".concat(numberToString(length));
         }
       }
     }, {
@@ -261,9 +254,9 @@ var neighborjoining = function () {
       }
     }, {
       key: "getAsNewick",
-      value: function getAsNewick() {
+      value: function getAsNewick(distances, round, p1) {
         this.PNewick = "";
-        this.createNewickTree(this.P);
+        this.createNewickTree(this.P, distances, round, p1);
         this.PNewick += ";";
         return this.PNewick;
       }

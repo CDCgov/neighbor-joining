@@ -22,7 +22,13 @@ var neighborjoining = (function(){
       this.newRow = new Array(N);
       this.labelToNode = new Array(2 * N);
       this.nextIndex = N;
-      this.initializeSI();
+      this.I = new Array(this.N);
+      this.S = new Array(this.N);
+      for (let i = 0; i < this.N; i++){
+        let sortedRow = sortWithIndices(this.D[i], i, true);
+        this.S[i] = sortedRow;
+        this.I[i] = sortedRow.sortIndices;
+      }
       this.removedIndices = new Set();
       this.indicesLeft = new Set();
       for (let i = 0; i < N; i++){
@@ -32,67 +38,6 @@ var neighborjoining = (function(){
       this.rowSumMax = 0;
       this.PNewick = "";
       this.taxonIdAccessor = taxonIdAccessor;
-      this.run();
-      return this;
-    }
-
-    initializeSI(){
-      let N = this.N;
-
-      this.I = new Array(N);
-      this.S = new Array(N);
-
-      for (let i = 0; i < N; i++){
-        let sortedRow = sortWithIndices(this.D[i], i, true);
-        this.S[i] = sortedRow;
-        this.I[i] = sortedRow.sortIndices;
-      }
-    }
-
-    search(){
-      let qMin = Infinity,
-          D = this.D,
-          cN = this.cN,
-          n2 = cN - 2,
-          S = this.S,
-          I = this.I,
-          rowSums = this.rowSums,
-          removedColumns = this.removedIndices,
-          uMax = this.rowSumMax,
-          q, minI = -1, minJ = -1, c2;
-
-      // initial guess for qMin
-      for (let r = 0; r < this.N; r++){
-        if (removedColumns.has(r)) continue;
-        c2 = I[r][0];
-        if (removedColumns.has(c2)) continue;
-        q = D[r][c2] * n2 - rowSums[r] - rowSums[c2];
-        if (q < qMin){
-          qMin = q;
-          minI = r;
-          minJ = c2;
-        }
-      }
-
-      for (let r = 0; r < this.N; r++){
-        if (removedColumns.has(r)) continue;
-        for (let c = 0; c < S[r].length; c++){
-          c2 = I[r][c];
-          if (removedColumns.has(c2)) continue;
-          if (S[r][c] * n2 - rowSums[r] - uMax > qMin) break;
-          q = D[r][c2] * n2 - rowSums[r] - rowSums[c2];
-          if (q < qMin){
-            qMin = q;
-            minI = r;
-            minJ = c2;
-          }
-        }
-      }
-
-      return {minI, minJ};
-    }
-
-    run(){
       let minI, minJ,
           d1, d2,
           l1, l2,
@@ -154,6 +99,50 @@ var neighborjoining = (function(){
       node2 = setUpNode(l2, d2);
 
       this.P = new PhyloNode(null, null, node1, node2);
+      return this;
+    }
+
+    search(){
+      let qMin = Infinity,
+          D = this.D,
+          cN = this.cN,
+          n2 = cN - 2,
+          S = this.S,
+          I = this.I,
+          rowSums = this.rowSums,
+          removedColumns = this.removedIndices,
+          uMax = this.rowSumMax,
+          q, minI = -1, minJ = -1, c2;
+
+      // initial guess for qMin
+      for (let r = 0; r < this.N; r++){
+        if (removedColumns.has(r)) continue;
+        c2 = I[r][0];
+        if (removedColumns.has(c2)) continue;
+        q = D[r][c2] * n2 - rowSums[r] - rowSums[c2];
+        if (q < qMin){
+          qMin = q;
+          minI = r;
+          minJ = c2;
+        }
+      }
+
+      for (let r = 0; r < this.N; r++){
+        if (removedColumns.has(r)) continue;
+        for (let c = 0; c < S[r].length; c++){
+          c2 = I[r][c];
+          if (removedColumns.has(c2)) continue;
+          if (S[r][c] * n2 - rowSums[r] - uMax > qMin) break;
+          q = D[r][c2] * n2 - rowSums[r] - rowSums[c2];
+          if (q < qMin){
+            qMin = q;
+            minI = r;
+            minJ = c2;
+          }
+        }
+      }
+
+      return {minI, minJ};
     }
 
     recalculateDistanceMatrix(joinedIndex1, joinedIndex2){
