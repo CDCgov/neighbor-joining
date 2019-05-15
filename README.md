@@ -1,3 +1,5 @@
+# NeighborJoining is now Archived. Please use [patristic.parseMatrix](https://cdcgov.github.io/patristic/) instead.
+
 neighborjoining is a javascript library for creating phylogenetic trees from
 distance matrices. It is based on the [Rapid Neighbour-Joining](http://pure.au.dk/ws/files/19821675/rapidNJ.pdf)
 algorithm.
